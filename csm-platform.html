@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RenewalIQ — CSM Platform</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#08090c;--bg2:#0f1117;--bg3:#161a22;--bg4:#1d2230;--bg5:#232a38;
+  --border:rgba(255,255,255,0.06);--borderup:rgba(255,255,255,0.12);
+  --text:#dde2f0;--textm:#6e7a94;--textd:#3a4255;
+  --g:#00e5aa;--gdim:rgba(0,229,170,0.08);--gborder:rgba(0,229,170,0.2);
+  --b:#3d9aff;--bdim:rgba(61,154,255,0.08);--bborder:rgba(61,154,255,0.2);
+  --a:#ffb340;--adim:rgba(255,179,64,0.08);--aborder:rgba(255,179,64,0.2);
+  --r:#ff4d6a;--rdim:rgba(255,77,106,0.08);--rborder:rgba(255,77,106,0.2);
+  --p:#9d7cf4;--pdim:rgba(157,124,244,0.08);--pborder:rgba(157,124,244,0.2);
+  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+  --rad:8px;--radlg:14px;--radxl:20px;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:13px;line-height:1.5}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:216px;min-width:216px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;position:sticky;top:0;overflow-y:auto}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.logo{padding:18px 16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px}
+.logomark{width:26px;height:26px;border-radius:7px;background:var(--g);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logotxt{font-size:13px;font-weight:600;letter-spacing:-.02em}
+.logosubtxt{font-size:10px;color:var(--textm);letter-spacing:.04em;text-transform:uppercase}
+.navsec{padding:10px 0}
+.navlbl{font-size:10px;color:var(--textd);letter-spacing:.08em;text-transform:uppercase;padding:0 14px 5px;font-weight:500}
+.navbtn{display:flex;align-items:center;gap:7px;padding:6px 14px;font-size:12px;color:var(--textm);cursor:pointer;border:none;background:none;width:100%;text-align:left;transition:all .12s;font-family:var(--font)}
+.navbtn:hover{color:var(--text);background:var(--bg3)}
+.navbtn.active{color:var(--g);background:var(--gdim)}
+.navbtn svg{width:13px;height:13px;flex-shrink:0}
+.navbadge{margin-left:auto;font-size:10px;padding:1px 5px;border-radius:8px;font-weight:600}
+.navbadge.r{background:var(--rdim);color:var(--r);border:1px solid var(--rborder)}
+.navbadge.g{background:var(--gdim);color:var(--g);border:1px solid var(--gborder)}
+.navbadge.a{background:var(--adim);color:var(--a);border:1px solid var(--aborder)}
+.sfconn{margin-top:auto;padding:12px 14px;border-top:1px solid var(--border)}
+.sfpill{display:flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rad);padding:6px 9px;font-size:11px;color:var(--textm)}
+.dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.dot.on{background:var(--g)}
+.dot.off{background:var(--r)}
+.dot.pulse{animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.topbar{height:48px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:10px;background:var(--bg2);position:sticky;top:0;z-index:20;flex-shrink:0}
+.toptitle{font-size:13px;font-weight:500}
+.topsep{color:var(--border);font-size:16px}
+.topsub{font-size:11px;color:var(--textm)}
+.topright{margin-left:auto;display:flex;align-items:center;gap:8px}
+.btn{font-family:var(--font);font-size:11px;font-weight:500;padding:5px 12px;border-radius:var(--rad);border:1px solid var(--borderup);background:var(--bg3);color:var(--textm);cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.btn:hover{color:var(--text);background:var(--bg4)}
+.btn.primary{background:var(--g);color:#000;border-color:var(--g);font-weight:600}
+.btn.primary:hover{opacity:.88}
+.btn.blue{background:var(--bdim);color:var(--b);border-color:var(--bborder)}
+.btn.blue:hover{background:rgba(61,154,255,.15)}
+.btn.red{background:var(--rdim);color:var(--r);border-color:var(--rborder)}
+.btn.amber{background:var(--adim);color:var(--a);border-color:var(--aborder)}
+.btn.sm{padding:3px 9px;font-size:10px}
+.btn:disabled{opacity:.4;cursor:default}
+.view{display:none;flex:1;overflow-y:auto}
+.view.active{display:block}
+.vinner{padding:20px}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.mcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radlg);padding:14px 16px}
+.mlbl{font-size:10px;color:var(--textm);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.mval{font-size:24px;font-weight:600;letter-spacing:-.02em;margin-bottom:3px}
+.msub{font-size:10px;color:var(--textm)}
+.msub .up{color:var(--g)}.msub .dn{color:var(--r)}
+.tcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radlg);overflow:hidden}
+.thead{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.thead h3{font-size:12px;font-weight:500}
+.searchin{font-family:var(--font);font-size:11px;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:var(--rad);padding:5px 9px;outline:none;width:180px;margin-left:auto}
+.searchin:focus{border-color:var(--borderup)}
+table{width:100%;border-collapse:collapse}
+th{font-size:9px;color:var(--textd);text-transform:uppercase;letter-spacing:.07em;padding:8px 16px;text-align:left;border-bottom:1px solid var(--border);font-weight:500}
+td{font-size:11px;padding:10px 16px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg3)}
+.aname{font-weight:500;font-size:12px;color:var(--text)}
+.aid{font-size:9px;color:var(--textd);font-family:var(--mono);margin-top:1px}
+.badge{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:600;padding:2px 7px;border-radius:20px;letter-spacing:.04em;text-transform:uppercase}
+.badge.r{background:var(--rdim);color:var(--r);border:1px solid var(--rborder)}
+.badge.a{background:var(--adim);color:var(--a);border:1px solid var(--aborder)}
+.badge.g{background:var(--gdim);color:var(--g);border:1px solid var(--gborder)}
+.badge.b{background:var(--bdim);color:var(--b);border:1px solid var(--bborder)}
+.badge.p{background:var(--pdim);color:var(--p);border:1px solid var(--pborder)}
+.hbwrap{display:flex;align-items:center;gap:7px}
+.hbar{flex:1;height:3px;background:var(--bg4);border-radius:2px;overflow:hidden;min-width:50px}
+.hfill{height:100%;border-radius:2px}
+.hscore{font-size:10px;font-weight:600;font-family:var(--mono);min-width:22px;text-align:right}
+.ract{display:flex;gap:4px}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;align-items:flex-start;justify-content:flex-end}
+.overlay.open{display:flex}
+.panel{width:480px;max-width:92vw;height:100vh;overflow-y:auto;background:var(--bg2);border-left:1px solid var(--borderup);animation:slideIn .18s ease}
+@keyframes slideIn{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
+.panelh{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;position:sticky;top:0;background:var(--bg2);z-index:1}
+.panelh h3{font-size:13px;font-weight:500}
+.panelclose{margin-left:auto;background:none;border:none;color:var(--textm);cursor:pointer;font-size:20px;line-height:1;padding:0 2px}
+.panelbody{padding:18px}
+.seclbl{font-size:9px;color:var(--textd);text-transform:uppercase;letter-spacing:.08em;font-weight:500;margin-bottom:8px;margin-top:16px}
+.seclbl:first-child{margin-top:0}
+.irow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}
+.irow:last-child{border-bottom:none}
+.ikey{color:var(--textm)}
+.ival{font-weight:500}
+.fgroup{margin-bottom:14px}
+.flabel{font-size:10px;color:var(--textm);margin-bottom:5px;font-weight:500;letter-spacing:.02em}
+.finput{width:100%;font-family:var(--font);font-size:12px;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:var(--rad);padding:8px 11px;outline:none;transition:border-color .12s}
+.finput:focus{border-color:var(--borderup)}
+.finput::placeholder{color:var(--textd)}
+select.finput option{background:var(--bg3)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.oauthcard{max-width:560px;margin:0 auto;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radxl);padding:32px}
+.oauthicon{width:48px;height:48px;border-radius:13px;background:var(--gdim);border:1px solid var(--gborder);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.oauthcard h2{text-align:center;font-size:18px;font-weight:600;margin-bottom:6px}
+.oauthcard p{text-align:center;font-size:12px;color:var(--textm);margin-bottom:22px;line-height:1.6}
+.oauthdivider{text-align:center;font-size:10px;color:var(--textd);margin:16px 0;text-transform:uppercase;letter-spacing:.06em}
+.oauthbig{width:100%;padding:10px;font-size:13px;justify-content:center;border-radius:var(--rad)}
+.oauthflow{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radlg);padding:14px 16px;margin-bottom:16px}
+.oauthflow-step{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:11px;color:var(--textm)}
+.oauthflow-step:last-child{margin-bottom:0}
+.stepnum{width:18px;height:18px;border-radius:50%;background:var(--gdim);border:1px solid var(--gborder);color:var(--g);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.oauthnote{font-size:10px;color:var(--textd);text-align:center;margin-top:10px}
+.tabs{display:flex;gap:0;padding:0 20px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0}
+.tab{font-family:var(--font);font-size:11px;font-weight:500;padding:9px 13px;background:none;border:none;color:var(--textm);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .12s}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--g);border-bottom-color:var(--g)}
+.tabcontent{display:none;padding:18px 20px}
+.tabcontent.active{display:block}
+.compose{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radlg);overflow:hidden;margin-bottom:14px}
+.composetool{padding:9px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.composetool span{font-size:11px;font-weight:500;color:var(--textm)}
+.cfield{padding:8px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center}
+.cfield label{font-size:9px;color:var(--textd);font-weight:600;text-transform:uppercase;letter-spacing:.06em;min-width:28px}
+.cfield input{flex:1;font-family:var(--font);font-size:12px;background:none;border:none;color:var(--text);outline:none}
+.cbody{width:100%;font-family:var(--font);font-size:12px;background:none;border:none;color:var(--text);outline:none;resize:vertical;padding:12px 14px;min-height:140px;line-height:1.6}
+.cfoot{padding:9px 14px;border-top:1px solid var(--border);display:flex;gap:7px}
+.aicontainer{display:flex;flex-direction:column;height:calc(100vh - 48px)}
+.aihead{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.aiavatarbig{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--g),var(--b));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.aiinfo h3{font-size:12px;font-weight:500}
+.aiinfo p{font-size:10px;color:var(--textm)}
+.aionline{font-size:10px;color:var(--g);display:flex;align-items:center;gap:4px}
+.chatarea{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:14px}
+.msg{display:flex;gap:8px;max-width:100%}
+.msg.user{flex-direction:row-reverse}
+.bubble{max-width:72%;font-size:12px;line-height:1.65;padding:9px 12px;border-radius:10px;background:var(--bg3);border:1px solid var(--border);color:var(--text);word-break:break-word}
+.msg.user .bubble{background:var(--gdim);border-color:var(--gborder)}
+.msgmeta{font-size:9px;color:var(--textd);margin-top:3px}
+.msg.user .msgmeta{text-align:right}
+.botav{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--g),var(--b));display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#000;flex-shrink:0;margin-top:1px}
+.typing{display:flex;gap:3px;padding:9px 12px}
+.tdot{width:5px;height:5px;border-radius:50%;background:var(--textd);animation:tbounce 1.2s infinite}
+.tdot:nth-child(2){animation-delay:.2s}
+.tdot:nth-child(3){animation-delay:.4s}
+@keyframes tbounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+.qachips{display:flex;flex-wrap:wrap;gap:5px;padding:0 20px 10px;flex-shrink:0}
+.qachip{font-family:var(--font);font-size:10px;font-weight:500;padding:4px 10px;border-radius:16px;border:1px solid var(--border);background:var(--bg3);color:var(--textm);cursor:pointer;transition:all .12s}
+.qachip:hover{color:var(--g);border-color:var(--gborder);background:var(--gdim)}
+.inputarea{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:flex-end;flex-shrink:0}
+.chatinput{flex:1;font-family:var(--font);font-size:12px;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:var(--rad);padding:8px 12px;outline:none;resize:none;max-height:100px;line-height:1.5;transition:border-color .12s}
+.chatinput:focus{border-color:var(--borderup)}
+.chatsend{width:32px;height:32px;border-radius:var(--rad);background:var(--g);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .12s}
+.chatsend:hover{opacity:.85}
+.seggrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.segcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radlg);padding:14px 16px}
+.segicon{font-size:18px;margin-bottom:6px}
+.segname{font-size:11px;font-weight:500;margin-bottom:3px}
+.segcount{font-size:22px;font-weight:600;letter-spacing:-.02em}
+.segsub{font-size:10px;color:var(--textm);margin-top:3px}
+.autoitem{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radlg);padding:13px 15px;display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.autoitem:hover{border-color:var(--borderup)}
+.autoicon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
+.autoinfo{flex:1;min-width:0}
+.autoname{font-size:12px;font-weight:500;margin-bottom:2px}
+.autodesc{font-size:10px;color:var(--textm);line-height:1.4}
+.autostats{font-size:9px;color:var(--textd);margin-top:3px;font-family:var(--mono)}
+.toggle{width:36px;height:19px;border-radius:10px;background:var(--bg4);border:1px solid var(--border);cursor:pointer;position:relative;transition:background .18s;flex-shrink:0}
+.toggle.on{background:var(--g);border-color:var(--g)}
+.toggle::after{content:'';position:absolute;width:13px;height:13px;border-radius:50%;background:white;top:2px;left:2px;transition:transform .18s}
+.toggle.on::after{transform:translateX(17px)}
+.qitem{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radlg);padding:14px 15px;margin-bottom:9px;cursor:pointer;transition:border-color .12s;border-left:3px solid transparent}
+.qitem:hover{border-color:var(--borderup)}
+.qitem.crit{border-left-color:var(--r)}
+.qitem.risk{border-left-color:var(--a)}
+.qitem.ok{border-left-color:var(--g)}
+.qtop{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.qname{font-size:12px;font-weight:500;flex:1}
+.qbody{font-size:11px;color:var(--textm);margin-bottom:10px;line-height:1.5}
+.qfooter{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.qtag{font-size:9px;color:var(--textd);background:var(--bg3);border:1px solid var(--border);padding:2px 7px;border-radius:4px;font-family:var(--mono)}
+.planstep{display:flex;gap:10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--rad);padding:11px 13px;margin-bottom:9px}
+.psnum{width:20px;height:20px;border-radius:50%;background:var(--gdim);border:1px solid var(--gborder);color:var(--g);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.psbody{font-size:11px;line-height:1.6}
+.pstitle{font-weight:500;color:var(--text);margin-bottom:2px}
+.psdetail{color:var(--textm)}
+.pstl{font-size:9px;color:var(--g);margin-top:3px}
+.quotecard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radlg);overflow:hidden}
+.qheader{padding:14px 18px;background:var(--bg3);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.qtitle{font-size:14px;font-weight:600}
+.qdate{font-size:10px;color:var(--textm)}
+.qbodyd{padding:18px}
+.qline{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}
+.qtotal{display:flex;justify-content:space-between;padding:10px 0 0;font-size:14px;font-weight:600;border-top:1px solid var(--borderup);margin-top:4px}
+.qfooterbtns{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:7px}
+.loadscr{display:flex;flex-direction:column;align-items:center;justify-content:center;height:180px;gap:12px}
+.spinner{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--g);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loadtxt{font-size:11px;color:var(--textm)}
+.actitem{display:flex;gap:10px;align-items:flex-start;padding:10px 13px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--rad);margin-bottom:7px}
+.acticon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.acttxt{font-size:11px;line-height:1.5}
+.acttime{font-size:9px;color:var(--textd);margin-top:2px}
+.alertbanner{background:var(--rdim);border:1px solid var(--rborder);border-radius:var(--rad);padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px;font-size:11px;color:var(--r)}
+.alertbanner.amber{background:var(--adim);border-color:var(--aborder);color:var(--a)}
+.logitem{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);font-size:11px}
+.logitem:last-child{border-bottom:none}
+.logtime{font-family:var(--mono);font-size:9px;color:var(--textd);min-width:60px}
+.logtype{min-width:88px}
+.logmsg{color:var(--textm);flex:1;font-size:10px}
+.modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center}
+.modal-wrap.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--borderup);border-radius:var(--radxl);padding:26px;width:440px;max-width:90vw;animation:fadeUp .18s ease}
+@keyframes fadeUp{from{transform:translateY(12px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal h3{font-size:15px;font-weight:600;margin-bottom:6px}
+.modal p{font-size:11px;color:var(--textm);margin-bottom:16px;line-height:1.6}
+.modalbtns{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav class="sidebar">
+  <div class="logo">
+    <div class="logomark">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1L11 3.75v5.5L6.5 12 2 9.25V3.75L6.5 1z" stroke="#000" stroke-width="1.4" fill="none"/><circle cx="6.5" cy="6.5" r="1.8" fill="#000"/></svg>
+    </div>
+    <div><div class="logotxt">RenewalIQ</div><div class="logosubtxt">CSM Platform</div></div>
+  </div>
+  <div class="navsec">
+    <div class="navlbl">Overview</div>
+    <button class="navbtn active" onclick="nav('dashboard')"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="7.5" y="1" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="1" y="7.5" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="7.5" y="7.5" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>Dashboard</button>
+    <button class="navbtn" onclick="nav('renewals')"><svg viewBox="0 0 13 13" fill="none"><path d="M11 6.5A4.5 4.5 0 1 1 6.5 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M6.5.5l2 2-2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Renewals<span class="navbadge r" id="renewal-badge">—</span></button>
+  </div>
+  <div class="navsec">
+    <div class="navlbl">Scale CSM</div>
+    <button class="navbtn" onclick="nav('accounts')"><svg viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="4" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 12c0-2.76 2.24-5 5-5s5 2.24 5 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Accounts</button>
+    <button class="navbtn" onclick="nav('emails')"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="2.5" width="11" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M1 4l5.5 4L12 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Email Automation</button>
+    <button class="navbtn" onclick="nav('quotes')"><svg viewBox="0 0 13 13" fill="none"><rect x="2" y="1" width="9" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M4 4h5M4 6.5h5M4 9h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Quotes</button>
+    <button class="navbtn" onclick="nav('plans')"><svg viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M6.5 2v9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Success Plans</button>
+  </div>
+  <div class="navsec">
+    <div class="navlbl">Digital CSM</div>
+    <button class="navbtn" onclick="nav('ai-csm')"><svg viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M4 6.5l2 2 3.5-3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>AI Agent<span class="navbadge g">LIVE</span></button>
+    <button class="navbtn" onclick="nav('automation')"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 1L8 4.5l3.5.5L9 7.5l.5 3.5L6.5 9.5 4 11l.5-3.5L2 5l3.5-.5L6.5 1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>Automations<span class="navbadge a" id="auto-badge">6 ON</span></button>
+  </div>
+  <div class="navsec">
+    <div class="navlbl">Settings</div>
+    <button class="navbtn" onclick="nav('setup')"><svg viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="2" stroke="currentColor" stroke-width="1.2"/><path d="M6.5 1v1.5M6.5 10.5V12M1 6.5h1.5M10.5 6.5H12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Salesforce Config</button>
+  </div>
+  <div class="sfconn">
+    <div class="sfpill">
+      <div class="dot off" id="sf-dot"></div>
+      <span id="sf-status-text">Not connected</span>
+      <button class="btn sm" style="margin-left:auto" onclick="nav('setup')">Config</button>
+    </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <span class="toptitle" id="topbar-title">Dashboard</span>
+    <span class="topsep">│</span>
+    <span class="topsub" id="topbar-sub">Connect Salesforce to begin</span>
+    <div class="topright">
+      <button class="btn" onclick="syncSF()" id="sync-btn" disabled>↻ Sync SF</button>
+      <button class="btn primary" onclick="nav('setup')">⚙ Configure</button>
+    </div>
+  </div>
+
+  <!-- SETUP -->
+  <div class="view active" id="view-setup">
+    <div class="vinner">
+      <div class="oauthcard">
+        <div class="oauthicon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2C6.03 2 2 6.03 2 11s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9z" stroke="#00e5aa" stroke-width="1.4"/><path d="M7.5 11l2.5 2.5L14.5 8" stroke="#00e5aa" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h2>Connect to Salesforce</h2>
+        <p>Authenticate with Salesforce OAuth 2.0 — your CSMs access only accounts they're permitted to see. Tokens are stored in session memory only.</p>
+        <div class="oauthflow">
+          <div class="oauthflow-step"><div class="stepnum">1</div><span>Enter your Salesforce Instance URL and Connected App Client ID below</span></div>
+          <div class="oauthflow-step"><div class="stepnum">2</div><span>Click <strong style="color:var(--text)">Sign in with Salesforce</strong> — a login window will open in a new tab</span></div>
+          <div class="oauthflow-step"><div class="stepnum">3</div><span>After authorizing, copy the <strong style="color:var(--text)">access_token</strong> from the redirect URL and paste it in the token field below</span></div>
+        </div>
+        <div class="frow" style="margin-bottom:14px">
+          <div class="fgroup" style="margin-bottom:0"><div class="flabel">Salesforce Instance URL</div><input class="finput" id="sf-url" placeholder="https://yourorg.salesforce.com" /></div>
+          <div class="fgroup" style="margin-bottom:0"><div class="flabel">Connected App Client ID</div><input class="finput" id="sf-client-id" placeholder="3MVG9..." /></div>
+        </div>
+        <div class="fgroup"><div class="flabel">OAuth Redirect URI (configured in Connected App)</div><input class="finput" id="sf-redirect" value="https://login.salesforce.com/services/oauth2/success" /></div>
+        <button class="btn primary oauthbig" onclick="launchOAuth()" style="margin-bottom:10px">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1C3.46 1 1 3.46 1 6.5S3.46 12 6.5 12 12 9.54 12 6.5 9.54 1 6.5 1z" stroke="#000" stroke-width="1.2"/><path d="M4 6.5l2 2 3.5-3.5" stroke="#000" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Sign in with Salesforce (OAuth 2.0)
+        </button>
+        <div class="oauthdivider">— or paste access token directly —</div>
+        <div class="fgroup"><div class="flabel">Access Token (from OAuth callback URL)</div><input class="finput" type="password" id="sf-token-manual" placeholder="00D…" /></div>
+        <div class="fgroup"><div class="flabel">Anthropic API Key (powers AI email drafting, quotes, plans, and AI CSM chat)</div><input class="finput" type="password" id="anthropic-key" placeholder="sk-ant-api03-..." /></div>
+        <button class="btn primary oauthbig" onclick="connectWithToken()" style="margin-bottom:8px">Connect with Token</button>
+        <button class="btn oauthbig" style="background:var(--bg3)" onclick="connectDemo()">Load Demo Data (no credentials needed)</button>
+        <p class="oauthnote">Tokens are stored in sessionStorage and cleared when you close this tab. Never transmitted to any third party.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="view" id="view-dashboard">
+    <div class="vinner">
+      <div id="dash-alerts"></div>
+      <div class="metrics" id="dash-metrics"></div>
+      <div style="display:grid;grid-template-columns:1fr 300px;gap:14px">
+        <div class="tcard">
+          <div class="thead"><h3>Urgent Renewal Queue</h3><span class="badge r" id="urgent-count">—</span><input class="searchin" placeholder="Search…" oninput="filterDashTable(this.value)" /></div>
+          <table><thead><tr><th>Account</th><th>Health</th><th>ARR</th><th>Days</th><th>Stage</th><th>Actions</th></tr></thead><tbody id="dash-tbody"></tbody></table>
+        </div>
+        <div class="tcard" style="padding:14px">
+          <div style="font-size:9px;color:var(--textd);text-transform:uppercase;letter-spacing:.07em;font-weight:500;margin-bottom:10px">Live Activity</div>
+          <div id="activity-feed"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACCOUNTS -->
+  <div class="view" id="view-accounts">
+    <div class="vinner">
+      <div class="tcard">
+        <div class="thead"><h3>All Accounts</h3><button class="btn" onclick="loadAccounts()">↻ Refresh from SF</button><input class="searchin" placeholder="Search…" oninput="filterAccounts(this.value)" /></div>
+        <table><thead><tr><th>Account</th><th>Industry</th><th>Health</th><th>ARR</th><th>Owner</th><th>Renewal</th><th>Stage</th><th>Segment</th><th>Actions</th></tr></thead><tbody id="acct-tbody"></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- RENEWALS -->
+  <div class="view" id="view-renewals">
+    <div class="vinner">
+      <div style="font-size:11px;color:var(--textm);margin-bottom:14px">Accounts renewing within 90 days — sorted by urgency score</div>
+      <div id="renewal-queue"></div>
+    </div>
+  </div>
+
+  <!-- EMAILS -->
+  <div class="view" id="view-emails">
+    <div class="tabs">
+      <button class="tab active" onclick="etab('compose',this)">Compose</button>
+      <button class="tab" onclick="etab('templates',this)">Templates</button>
+      <button class="tab" onclick="etab('sent',this)">Sent Log</button>
+    </div>
+    <div class="tabcontent active" id="etab-compose">
+      <div style="max-width:660px">
+        <div style="display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+          <button class="btn blue" onclick="aiDraft('checkin')">✦ Check-in</button>
+          <button class="btn blue" onclick="aiDraft('renewal')">✦ Renewal Outreach</button>
+          <button class="btn blue" onclick="aiDraft('qbr')">✦ QBR Invite</button>
+          <button class="btn blue" onclick="aiDraft('atrisk')">✦ At-Risk</button>
+          <select class="finput" id="email-acct-sel" style="width:190px;margin-left:auto" onchange="prefillEmail(this.value)"><option value="">Select account…</option></select>
+        </div>
+        <div class="compose">
+          <div class="composetool"><span>New Email</span><button class="btn sm blue" style="margin-left:auto" onclick="aiDraft('checkin')">AI Draft ✦</button></div>
+          <div class="cfield"><label>To</label><input id="email-to" placeholder="contact@customer.com" /></div>
+          <div class="cfield"><label>CC</label><input id="email-cc" placeholder="csm@yourcompany.com" /></div>
+          <div class="cfield"><label>Re</label><input id="email-subject" placeholder="Subject…" /></div>
+          <textarea class="cbody" id="email-body" placeholder="Email body — click an AI Draft button above or write manually…"></textarea>
+          <div class="cfoot">
+            <button class="btn primary" onclick="sendEmail()">Send</button>
+            <button class="btn" onclick="scheduleEmail()">Schedule</button>
+            <button class="btn" onclick="saveTpl()">Save Template</button>
+          </div>
+        </div>
+        <div id="email-status" style="font-size:11px;color:var(--textm);min-height:16px"></div>
+      </div>
+    </div>
+    <div class="tabcontent" id="etab-templates"><div id="templates-list"></div></div>
+    <div class="tabcontent" id="etab-sent"><div id="sent-log" style="font-size:11px;color:var(--textm)">No emails sent this session.</div></div>
+  </div>
+
+  <!-- QUOTES -->
+  <div class="view" id="view-quotes">
+    <div class="vinner" style="max-width:740px">
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+        <select class="finput" id="quote-acct-sel" style="width:220px"><option value="">Select account…</option></select>
+        <button class="btn primary" onclick="genQuote()">✦ Generate Quote</button>
+        <button class="btn" id="send-quote-btn" onclick="sendQuote()" disabled>Send Quote</button>
+        <button class="btn" id="sf-opp-btn" onclick="createSFOpp()" disabled>Create SF Opportunity</button>
+      </div>
+      <div id="quote-out"></div>
+    </div>
+  </div>
+
+  <!-- SUCCESS PLANS -->
+  <div class="view" id="view-plans">
+    <div class="vinner" style="max-width:700px">
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+        <select class="finput" id="plan-acct-sel" style="width:220px"><option value="">Select account…</option></select>
+        <button class="btn primary" onclick="genPlan()">✦ Build Success Plan</button>
+        <button class="btn" onclick="savePlanSF()">Save to Salesforce</button>
+      </div>
+      <div id="plan-out"></div>
+    </div>
+  </div>
+
+  <!-- AI CSM -->
+  <div class="view" id="view-ai-csm">
+    <div class="aicontainer">
+      <div class="aihead">
+        <div class="aiavatarbig"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="6" stroke="#000" stroke-width="1.3"/><path d="M5 7.5l2 2 3.5-3.5" stroke="#000" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="aiinfo"><h3>Digital AI CSM</h3><p>Autonomous management — digital-touch &amp; scale accounts</p></div>
+        <div class="aionline" style="margin-left:auto">● Monitoring <span id="ai-watch-count">0</span> accounts</div>
+        <div style="display:flex;gap:6px;margin-left:12px">
+          <button class="btn sm" onclick="clearChat()">Clear</button>
+          <button class="btn sm red" onclick="escalateAll()">Escalate All Critical</button>
+        </div>
+      </div>
+      <div class="qachips">
+        <button class="qachip" onclick="qmsg('Show me all at-risk and critical accounts with their renewal timelines')">At-risk accounts</button>
+        <button class="qachip" onclick="qmsg('Which accounts are renewing in the next 30 days?')">30-day renewals</button>
+        <button class="qachip" onclick="qmsg('Generate and send renewal quotes for all accounts renewing within 60 days')">Auto-send quotes</button>
+        <button class="qachip" onclick="qmsg('Run the check-in email sequence for all digital-touch accounts now')">Run check-in sequence</button>
+        <button class="qachip" onclick="qmsg('Which accounts have health scores below 50 and what should I do?')">Health interventions</button>
+        <button class="qachip" onclick="qmsg('Summarize the full portfolio health and flag any escalations needed')">Portfolio summary</button>
+      </div>
+      <div class="chatarea" id="chat-area"></div>
+      <div class="inputarea">
+        <textarea class="chatinput" id="chat-input" placeholder="Ask the AI CSM anything…" rows="1" onkeydown="handleKey(event)"></textarea>
+        <button class="chatsend" onclick="sendChat()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 5-10 5V7l7-1-7-1V1z" fill="white"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTOMATION -->
+  <div class="view" id="view-automation">
+    <div class="vinner">
+      <div class="seggrid" id="seg-grid"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="tcard" style="padding:14px">
+          <div style="font-size:9px;color:var(--textd);text-transform:uppercase;letter-spacing:.07em;font-weight:500;margin-bottom:12px">Automation Rules</div>
+          <div id="automation-rules"></div>
+        </div>
+        <div class="tcard" style="padding:14px">
+          <div style="font-size:9px;color:var(--textd);text-transform:uppercase;letter-spacing:.07em;font-weight:500;margin-bottom:10px">Automation Log</div>
+          <div id="auto-log"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- PANEL -->
+<div class="overlay" id="overlay">
+  <div class="panel">
+    <div class="panelh"><h3 id="panel-title">Account</h3><button class="panelclose" onclick="closePanelFn()">×</button></div>
+    <div class="panelbody" id="panel-body"></div>
+  </div>
+</div>
+
+<!-- ESCALATION MODAL -->
+<div class="modal-wrap" id="escalate-modal">
+  <div class="modal">
+    <h3>Escalation — Human CSM Required</h3>
+    <p>This account will be flagged in Salesforce and the assigned CSM will receive an urgent notification.</p>
+    <div id="escalate-details" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rad);padding:10px 12px;font-size:11px;color:var(--textm);line-height:1.8"></div>
+    <div class="modalbtns">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn primary" onclick="confirmEscalate()">Confirm Escalation</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── STATE ── */
+let SF = {url:'',token:'',connected:false,instanceUrl:''};
+let AKEY = '';
+let ACCTS = [];
+let CHAT = [];
+let SENT = [];
+let AUTO_ENABLED = {checkin:true,renewal:true,healthmon:true,escalate:true,autoquote:true,autoplan:false};
+let AUTO_LOG = [];
+let currentEscId = null;
+let lastQuoteAcct = null;
+
+/* ── NAV ── */
+const TITLES = {setup:'Salesforce Config',dashboard:'Dashboard',accounts:'Accounts',renewals:'Renewals',emails:'Email Automation',quotes:'Quotes',plans:'Success Plans','ai-csm':'Digital AI CSM',automation:'Automations'};
+function nav(id) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.navbtn').forEach(b=>b.classList.remove('active'));
+  const v=document.getElementById('view-'+id); if(v) v.classList.add('active');
+  const b=document.querySelector(`[onclick="nav('${id}')"]`); if(b) b.classList.add('active');
+  document.getElementById('topbar-title').textContent = TITLES[id]||id;
+  document.getElementById('topbar-sub').textContent = SF.connected?'● Connected · '+SF.url:'○ Not connected';
+  if(id==='dashboard') renderDash();
+  if(id==='accounts') renderAccts();
+  if(id==='renewals') renderRenewals();
+  if(id==='automation') renderAuto();
+  if(['emails','quotes','plans'].includes(id)) popSelects();
+  if(id==='emails') renderTemplates();
+}
+
+/* ── OAUTH ── */
+function launchOAuth() {
+  const url=(document.getElementById('sf-url').value||'').trim().replace(/\/$/,'');
+  const cid=(document.getElementById('sf-client-id').value||'').trim();
+  const redir=(document.getElementById('sf-redirect').value||'').trim();
+  if(!url||!cid){alert('Enter Instance URL and Client ID first.');return;}
+  const authUrl=`${url}/services/oauth2/authorize?response_type=token&client_id=${encodeURIComponent(cid)}&redirect_uri=${encodeURIComponent(redir)}&prompt=login`;
+  window.open(authUrl,'_blank','width=600,height=700');
+  setTimeout(()=>alert('After authorizing in Salesforce:\n1. Copy the access_token from the redirect URL\n2. Paste it in the "Access Token" field below\n3. Click "Connect with Token"'),500);
+}
+async function connectWithToken() {
+  const url=(document.getElementById('sf-url').value||'').trim().replace(/\/$/,'');
+  const token=(document.getElementById('sf-token-manual').value||'').trim();
+  AKEY=(document.getElementById('anthropic-key').value||'').trim();
+  if(!token){alert('Paste your access token first.');return;}
+  SF.url=url; SF.token=token; SF.instanceUrl=url;
+  try {
+    const r=await fetch(`${url}/services/oauth2/userinfo`,{headers:{Authorization:`Bearer ${token}`}});
+    SF.connected=true; updateSFStatus(true);
+    if(r.ok) { await loadAccounts(); } else { loadDemoAccts(); }
+  } catch(e){ SF.connected=true; updateSFStatus(true); loadDemoAccts(); }
+  nav('dashboard');
+}
+function connectDemo() {
+  AKEY=(document.getElementById('anthropic-key').value||'').trim();
+  SF.connected=true; SF.url='demo.salesforce.com'; SF.token='demo'; SF.instanceUrl='demo';
+  updateSFStatus(true); loadDemoAccts(); nav('dashboard');
+}
+function updateSFStatus(on) {
+  document.getElementById('sf-dot').className='dot '+(on?'on pulse':'off');
+  document.getElementById('sf-status-text').textContent=on?'Connected':'Not connected';
+  document.getElementById('sync-btn').disabled=!on;
+}
+async function syncSF() { await loadAccounts(); addLog('sync','SF Sync','Loaded '+ACCTS.length+' accounts'); }
+
+/* ── SF API ── */
+async function sfQ(soql) {
+  if(SF.token==='demo') return null;
+  const r=await fetch(`${SF.instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(soql)}`,{headers:{Authorization:`Bearer ${SF.token}`}});
+  return r.json();
+}
+async function sfCreate(obj,payload) {
+  if(SF.token==='demo') return {id:'demo-'+Date.now()};
+  const r=await fetch(`${SF.instanceUrl}/services/data/v59.0/sobjects/${obj}/`,{method:'POST',headers:{Authorization:`Bearer ${SF.token}`,'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  return r.json();
+}
+
+/* ── LOAD ACCOUNTS ── */
+async function loadAccounts() {
+  if(SF.token==='demo'){loadDemoAccts();return;}
+  try {
+    const d=await sfQ(`SELECT Id,Name,Industry,AnnualRevenue,Owner.Name,Health_Score__c,Renewal_Date__c,Contract_Stage__c FROM Account WHERE Type='Customer' ORDER BY Renewal_Date__c ASC NULLS LAST LIMIT 200`);
+    if(d?.records) {
+      ACCTS=d.records.map(r=>({id:r.Id,name:r.Name,industry:r.Industry||'Technology',arr:r.AnnualRevenue||0,csm:r.Owner?.Name||'Unassigned',health:r.Health_Score__c||50,renewalDate:r.Renewal_Date__c||fdate(60),stage:r.Contract_Stage__c||'Active',contact:'',type:'scale'}));
+      ACCTS.forEach(a=>{a.type=a.arr<50000?'digital':a.arr<200000?'scale':'high';});
+    }
+  } catch(e){loadDemoAccts();return;}
+  afterLoad();
+}
+function loadDemoAccts() {
+  const D=[
+    {n:'Acme Corp',ind:'Technology',arr:95000,csm:'Sarah K.',h:82,days:45,st:'Active'},
+    {n:'BrightEdge Tech',ind:'Media',arr:180000,csm:'Tom W.',h:45,days:7,st:'At Risk'},
+    {n:'Nova Health Systems',ind:'Healthcare',arr:260000,csm:'Anya R.',h:71,days:38,st:'Renewal Sent'},
+    {n:'Quasar Dynamics',ind:'Finance',arr:42000,csm:'Digital AI',h:23,days:3,st:'At Risk'},
+    {n:'TerraLogic Inc',ind:'Logistics',arr:78000,csm:'Digital AI',h:90,days:60,st:'Active'},
+    {n:'Zenith Retail',ind:'Retail',arr:310000,csm:'Anya R.',h:58,days:22,st:'Negotiating'},
+    {n:'Orbit Financial',ind:'Finance',arr:155000,csm:'Sarah K.',h:64,days:8,st:'Renewal Sent'},
+    {n:'Luminary Media',ind:'Media',arr:36000,csm:'Digital AI',h:38,days:90,st:'Active'},
+    {n:'Cascade Software',ind:'Technology',arr:210000,csm:'Tom W.',h:77,days:35,st:'Active'},
+    {n:'RiverBend Analytics',ind:'Technology',arr:67000,csm:'Digital AI',h:86,days:12,st:'Active'},
+    {n:'Apex Manufacturing',ind:'Manufacturing',arr:140000,csm:'Anya R.',h:52,days:75,st:'At Risk'},
+    {n:'Solaris Energy',ind:'Energy',arr:92000,csm:'Digital AI',h:69,days:28,st:'Active'},
+    {n:'CloudNine Platforms',ind:'Technology',arr:320000,csm:'Sarah K.',h:31,days:5,st:'At Risk'},
+    {n:'Ironclad Logistics',ind:'Logistics',arr:115000,csm:'Tom W.',h:74,days:50,st:'Renewal Sent'},
+    {n:'Vantage Point AI',ind:'Technology',arr:55000,csm:'Digital AI',h:88,days:18,st:'Active'},
+  ];
+  ACCTS=D.map((d,i)=>({id:'0015'+(100+i),name:d.n,industry:d.ind,arr:d.arr,csm:d.csm,health:d.h,renewalDate:fdate(d.days),stage:d.st,contact:`csm@${d.n.toLowerCase().replace(/[^a-z]/g,'')}.com`,type:d.arr<50000?'digital':d.arr<200000?'scale':'high'}));
+  afterLoad();
+}
+function afterLoad() {
+  popSelects(); updateBadges(); runAutoChecks();
+  document.getElementById('ai-watch-count').textContent=ACCTS.length;
+}
+
+/* ── DASHBOARD ── */
+function renderDash() {
+  const arr90=ACCTS.filter(a=>du(a.renewalDate)<=90).reduce((s,a)=>s+a.arr,0);
+  const atR=ACCTS.filter(a=>a.health<50).length;
+  const soon=ACCTS.filter(a=>du(a.renewalDate)<=30).length;
+  const avgH=Math.round(ACCTS.reduce((s,a)=>s+a.health,0)/(ACCTS.length||1));
+  document.getElementById('dash-metrics').innerHTML=`
+    <div class="mcard"><div class="mlbl">ARR Renewing (90d)</div><div class="mval">$${(arr90/1000).toFixed(0)}K</div><div class="msub">${ACCTS.filter(a=>du(a.renewalDate)<=90).length} accounts</div></div>
+    <div class="mcard"><div class="mlbl">At-Risk ARR</div><div class="mval" style="color:var(--r)">$${(ACCTS.filter(a=>a.health<50).reduce((s,a)=>s+a.arr,0)/1000).toFixed(0)}K</div><div class="msub"><span class="dn">${atR} accounts</span> health below 50</div></div>
+    <div class="mcard"><div class="mlbl">Renewals This Month</div><div class="mval">${soon}</div><div class="msub">${soon} due within 30 days</div></div>
+    <div class="mcard"><div class="mlbl">Avg Health Score</div><div class="mval" style="color:${hcol(avgH)}">${avgH}</div><div class="msub">Across ${ACCTS.length} accounts</div></div>`;
+  const crit=ACCTS.filter(a=>a.health<30||du(a.renewalDate)<7);
+  document.getElementById('dash-alerts').innerHTML=crit.map(a=>`
+    <div class="alertbanner"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1L13 12H1L7 1z" stroke="currentColor" stroke-width="1.2"/><path d="M7 5v3M7 9.5v.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    <strong>${a.name}</strong> — health ${a.health}/100, renewal in ${du(a.renewalDate)} days
+    <button class="btn sm red" style="margin-left:auto" onclick="openEsc('${a.id}')">Escalate</button></div>`).join('');
+  renderDashTable(ACCTS);
+  renderActivity();
+  document.getElementById('urgent-count').textContent=crit.length+' urgent';
+}
+function renderDashTable(accts) {
+  const tb=document.getElementById('dash-tbody'); if(!tb) return;
+  const sh=accts.filter(a=>a.health<70||du(a.renewalDate)<30).sort((a,b)=>a.health-b.health).slice(0,10);
+  tb.innerHTML=sh.map(a=>`<tr>
+    <td><div class="aname">${a.name}</div><div class="aid">${a.id}</div></td>
+    <td><div class="hbwrap"><div class="hbar"><div class="hfill" style="width:${a.health}%;background:${hcol(a.health)}"></div></div><span class="hscore" style="color:${hcol(a.health)}">${a.health}</span></div></td>
+    <td>$${(a.arr/1000).toFixed(0)}K</td>
+    <td style="color:${du(a.renewalDate)<14?'var(--r)':'var(--text)'};font-family:var(--mono);font-size:10px">${du(a.renewalDate)}d</td>
+    <td><span class="badge ${sbadge(a.stage)}">${a.stage}</span></td>
+    <td><div class="ract"><button class="btn sm" onclick="openPanel('${a.id}')">View</button><button class="btn sm blue" onclick="qEmail('${a.id}')">Email</button><button class="btn sm" onclick="qQuote('${a.id}')">Quote</button></div></td>
+  </tr>`).join('');
+}
+function filterDashTable(q){renderDashTable(ACCTS.filter(a=>a.name.toLowerCase().includes(q.toLowerCase())));}
+function renderActivity() {
+  const f=document.getElementById('activity-feed'); if(!f) return;
+  const base=[
+    {ic:'✉',col:'var(--bdim)',txt:'<strong>AI check-in sent</strong> to TerraLogic Inc',t:'2m ago'},
+    {ic:'⚠',col:'var(--rdim)',txt:'<strong>Health alert:</strong> Quasar → 23/100',t:'8m ago'},
+    {ic:'✓',col:'var(--gdim)',txt:'<strong>Renewed:</strong> Vantage Point AI $55K',t:'1h ago'},
+    {ic:'📄',col:'var(--pdim)',txt:'<strong>Quote sent:</strong> Nova Health $260K',t:'2h ago'},
+    {ic:'↻',col:'var(--adim)',txt:'<strong>Sync:</strong> '+ACCTS.length+' accounts loaded',t:'3h ago'},
+  ];
+  const all=[...SENT.slice(-2).map(e=>({ic:'✉',col:'var(--bdim)',txt:`<strong>Email sent</strong> to ${e.to}`,t:'Just now'})),...base];
+  f.innerHTML=all.slice(0,6).map(i=>`<div class="actitem"><div class="acticon" style="background:${i.col}">${i.ic}</div><div><div class="acttxt">${i.txt}</div><div class="acttime">${i.t}</div></div></div>`).join('');
+}
+function addAct(ic,col,txt){const f=document.getElementById('activity-feed');if(!f)return;const e=document.createElement('div');e.className='actitem';e.innerHTML=`<div class="acticon" style="background:${col}">${ic}</div><div><div class="acttxt">${txt}</div><div class="acttime">Just now</div></div>`;f.prepend(e);}
+
+/* ── ACCOUNTS ── */
+function renderAccts(){renderAcctTable(ACCTS);}
+function renderAcctTable(accts){
+  const tb=document.getElementById('acct-tbody');if(!tb)return;
+  tb.innerHTML=accts.map(a=>`<tr>
+    <td><div class="aname">${a.name}</div><div class="aid">${a.id}</div></td>
+    <td style="font-size:10px;color:var(--textm)">${a.industry}</td>
+    <td><div class="hbwrap"><div class="hbar"><div class="hfill" style="width:${a.health}%;background:${hcol(a.health)}"></div></div><span class="hscore" style="color:${hcol(a.health)}">${a.health}</span></div></td>
+    <td>$${(a.arr/1000).toFixed(0)}K</td>
+    <td style="font-size:10px;color:var(--textm)">${a.csm}</td>
+    <td style="font-size:10px;color:${du(a.renewalDate)<14?'var(--r)':'var(--textm)'};font-family:var(--mono)">${a.renewalDate}</td>
+    <td><span class="badge ${sbadge(a.stage)}">${a.stage}</span></td>
+    <td><span class="badge ${a.type==='digital'?'g':a.type==='scale'?'b':'p'}">${a.type}</span></td>
+    <td><div class="ract"><button class="btn sm" onclick="openPanel('${a.id}')">Detail</button><button class="btn sm blue" onclick="qEmail('${a.id}')">✦ Email</button></div></td>
+  </tr>`).join('');
+}
+function filterAccounts(q){renderAcctTable(ACCTS.filter(a=>a.name.toLowerCase().includes(q.toLowerCase())||a.industry.toLowerCase().includes(q.toLowerCase())));}
+
+/* ── RENEWALS ── */
+function renderRenewals(){
+  const c=document.getElementById('renewal-queue');if(!c)return;
+  const up=ACCTS.filter(a=>du(a.renewalDate)<=90).sort((a,b)=>du(a.renewalDate)-du(b.renewalDate));
+  c.innerHTML=up.map(a=>{
+    const d=du(a.renewalDate);const cls=d<14&&a.health<60?'crit':a.health<60||d<30?'risk':'ok';
+    return `<div class="qitem ${cls}" onclick="openPanel('${a.id}')">
+      <div class="qtop"><span class="qname">${a.name}</span>
+        <span class="badge ${d<14?'r':d<30?'a':'g'}">${d}d</span>
+        <span class="badge b">$${(a.arr/1000).toFixed(0)}K</span>
+        <span class="badge ${a.health>=75?'g':a.health>=50?'a':'r'}">H:${a.health}</span>
+      </div>
+      <div class="qbody">${a.csm} · ${a.stage} · ${a.industry}</div>
+      <div class="qfooter">
+        <span class="qtag">${a.renewalDate}</span>
+        <button class="btn sm blue" onclick="event.stopPropagation();qEmail('${a.id}')">✦ Draft Email</button>
+        <button class="btn sm" onclick="event.stopPropagation();qQuote('${a.id}')">Quote</button>
+        <button class="btn sm" onclick="event.stopPropagation();qPlan('${a.id}')">Plan</button>
+        ${a.health<50?`<button class="btn sm red" onclick="event.stopPropagation();openEsc('${a.id}')">Escalate</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ── PANEL ── */
+function openPanel(id){
+  const a=ACCTS.find(x=>x.id===id);if(!a)return;
+  document.getElementById('panel-title').textContent=a.name;
+  document.getElementById('panel-body').innerHTML=`
+    <div class="seclbl">Account Details</div>
+    <div class="irow"><span class="ikey">SF ID</span><span class="ival" style="font-family:var(--mono);font-size:10px">${a.id}</span></div>
+    <div class="irow"><span class="ikey">Industry</span><span class="ival">${a.industry}</span></div>
+    <div class="irow"><span class="ikey">ARR</span><span class="ival">$${a.arr.toLocaleString()}</span></div>
+    <div class="irow"><span class="ikey">CSM</span><span class="ival">${a.csm}</span></div>
+    <div class="irow"><span class="ikey">Segment</span><span class="ival"><span class="badge ${a.type==='digital'?'g':a.type==='scale'?'b':'p'}">${a.type}</span></span></div>
+    <div class="irow"><span class="ikey">Stage</span><span class="ival"><span class="badge ${sbadge(a.stage)}">${a.stage}</span></span></div>
+    <div class="irow"><span class="ikey">Renewal Date</span><span class="ival" style="color:${du(a.renewalDate)<14?'var(--r)':'inherit'}">${a.renewalDate} (${du(a.renewalDate)}d)</span></div>
+    <div class="seclbl">Health Score</div>
+    <div class="hbwrap" style="margin-bottom:6px"><div class="hbar" style="height:6px"><div class="hfill" style="width:${a.health}%;background:${hcol(a.health)}"></div></div><span class="hscore" style="color:${hcol(a.health)};font-size:14px">${a.health}</span></div>
+    <div style="font-size:10px;color:var(--textm)">${a.health>=75?'Healthy — low churn risk':a.health>=50?'Monitor — intervention recommended':'Critical — immediate action needed'}</div>
+    <div class="seclbl">Actions</div>
+    <div style="display:flex;flex-direction:column;gap:7px">
+      <button class="btn blue" style="justify-content:center" onclick="qEmail('${a.id}');closePanelFn()">✦ Generate & Send Email</button>
+      <button class="btn" style="justify-content:center" onclick="qQuote('${a.id}');closePanelFn()">✦ Generate Quote</button>
+      <button class="btn" style="justify-content:center" onclick="qPlan('${a.id}');closePanelFn()">✦ Build Success Plan</button>
+      <button class="btn" style="justify-content:center" onclick="logTask('${a.id}','Manual account review')">Log Activity to SF</button>
+      <button class="btn red" style="justify-content:center" onclick="openEsc('${a.id}');closePanelFn()">Escalate to Human CSM</button>
+    </div>
+    <div class="seclbl">Contact</div>
+    <div class="irow"><span class="ikey">Email</span><span class="ival" style="color:var(--b)">${a.contact||'Not on file'}</span></div>`;
+  document.getElementById('overlay').classList.add('open');
+}
+function closePanelFn(){document.getElementById('overlay').classList.remove('open');}
+
+/* ── EMAIL ── */
+const ESUBJ={checkin:"Checking in — how is Q going?",renewal:"Your renewal is coming up — let's connect",qbr:"QBR Invite — quarterly review",atrisk:"Checking in — want to make sure we're delivering value"};
+async function aiDraft(type){
+  const id=document.getElementById('email-acct-sel').value;
+  const a=ACCTS.find(x=>x.id===id)||ACCTS[0];
+  setEstatus('✦ Generating with AI…','var(--textm)');
+  document.getElementById('email-to').value=a?.contact||'contact@customer.com';
+  document.getElementById('email-subject').value=ESUBJ[type]||'Following up';
+  document.getElementById('email-body').value='';
+  if(!AKEY){document.getElementById('email-body').value=demoEmail(type,a);setEstatus('✓ Demo draft ready — add Anthropic key for live AI generation','var(--g)');return;}
+  const prompts={
+    checkin:`Write a warm professional check-in email from a SaaS CSM to ${a?.name} (${a?.industry}, ARR $${a?.arr?.toLocaleString()}, health ${a?.health}/100). 3-4 paragraphs. Focus on business outcomes and upcoming QBR. No placeholder brackets.`,
+    renewal:`Write a renewal outreach email to ${a?.name}, renewal in ${du(a?.renewalDate)} days, ARR $${a?.arr?.toLocaleString()}, health ${a?.health}/100. Frame renewal as natural next step. Include a call to action.`,
+    qbr:`Write a QBR invitation email for ${a?.name}. Proposed agenda: ROI review, roadmap preview, expansion discussion. Professional, 3 paragraphs.`,
+    atrisk:`Write a sensitive re-engagement email to ${a?.name} (health ${a?.health}/100, renewal ${du(a?.renewalDate)} days). Acknowledge potential friction empathetically. Offer executive sponsor call. Avoid being salesy.`
+  };
+  try {
+    const txt=await callClaude(prompts[type]||prompts.checkin,600);
+    document.getElementById('email-body').value=txt;
+    setEstatus('✓ AI draft generated','var(--g)');
+    addLog('email','AI Draft','Generated '+type+' for '+(a?.name||'account'));
+  } catch(e){setEstatus('✗ API error — check your Anthropic key','var(--r)');}
+}
+function demoEmail(type,a){
+  const n=(a?.name?.split(' ')[0])||'Team';
+  return {
+    checkin:`Hi ${n},\n\nHoping Q is going well for your team. I wanted to reach out and check in on how things are progressing with the platform. We've seen some great outcomes from customers in ${a?.industry||'your industry'} this quarter and I'd love to hear about your wins.\n\nI'd also love to schedule a 30-minute call to preview some roadmap items coming next quarter that I think will directly resonate with your goals. Are you available next week?\n\nBest,\nYour CSM`,
+    renewal:`Hi ${n},\n\nI wanted to reach out ahead of your renewal on ${a?.renewalDate||'upcoming date'} to make sure we're set up for another great year together.\n\nYour team has accomplished a lot on the platform this year, and we have several new capabilities in the pipeline that will directly support your expansion goals.\n\nI'll send over a formal renewal proposal shortly — would you like to connect first to walk through it together?\n\nBest,\nYour CSM`,
+    qbr:`Hi ${n},\n\nI'd love to schedule a Quarterly Business Review with your team. Proposed agenda:\n• ROI and usage review from the past quarter\n• Roadmap preview for Q ahead\n• Expansion and upsell opportunities\n\nCould we find 45 minutes in the next two weeks? I can send a calendar invite whenever works for your team.\n\nBest,\nYour CSM`,
+    atrisk:`Hi ${n},\n\nI wanted to personally reach out because I want to make sure we're fully delivering on what your team needs from the platform.\n\nI've noticed some changes and would love to understand if there are any challenges we can help address. I've also looped in our VP of Customer Success — we take this seriously and want to make sure you're successful.\n\nCould we find 20 minutes this week?\n\nSincerely,\nYour CSM`
+  }[type]||'';
+}
+function setEstatus(m,c){const e=document.getElementById('email-status');if(e){e.textContent=m;e.style.color=c;}}
+async function sendEmail(){
+  const to=document.getElementById('email-to').value;
+  const subj=document.getElementById('email-subject').value;
+  const body=document.getElementById('email-body').value;
+  if(!to||!body){setEstatus('Fill in To and Body first.','var(--r)');return;}
+  await logTask(null,subj||'CSM Email',body,to);
+  SENT.push({to,subj,body,t:new Date().toLocaleTimeString()});
+  setEstatus(`✓ Sent to ${to} and logged to Salesforce`,'var(--g)');
+  document.getElementById('sent-log').innerHTML=SENT.map(e=>`<div class="actitem"><div class="acticon" style="background:var(--bdim)">✉</div><div><div class="acttxt"><strong>${e.subj}</strong> → ${e.to}</div><div class="acttime">${e.t}</div></div></div>`).join('');
+  addAct('✉','var(--bdim)',`<strong>Email sent</strong> to ${to}`);
+  addLog('email','Email Sent',to);
+}
+function scheduleEmail(){setEstatus('✓ Scheduled for 9 AM tomorrow','var(--g)');}
+function saveTpl(){setEstatus('✓ Saved as template','var(--g)');}
+function prefillEmail(id){const a=ACCTS.find(x=>x.id===id);if(a)document.getElementById('email-to').value=a.contact||'';}
+function qEmail(id){nav('emails');setTimeout(()=>{document.getElementById('email-acct-sel').value=id;const a=ACCTS.find(x=>x.id===id);aiDraft(a?.health<50?'atrisk':du(a?.renewalDate)<30?'renewal':'checkin');},120);}
+function etab(id,el){
+  document.querySelectorAll('#view-emails .tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('#view-emails .tabcontent').forEach(t=>t.classList.remove('active'));
+  document.getElementById('etab-'+id)?.classList.add('active');
+  el.classList.add('active');
+}
+function renderTemplates(){
+  const c=document.getElementById('templates-list');if(!c)return;
+  c.innerHTML=`<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px">
+    ${['checkin','renewal','atrisk','qbr'].map(type=>`
+      <div class="tcard" style="padding:14px;cursor:pointer" onclick="etab('compose',document.querySelectorAll('#view-emails .tab')[0]);aiDraft('${type}')">
+        <div style="font-size:11px;font-weight:500;margin-bottom:3px">${{checkin:'Quarterly Check-in',renewal:'Renewal Outreach',atrisk:'At-Risk Intervention',qbr:'QBR Invitation'}[type]}</div>
+        <div style="font-size:10px;color:var(--textm);margin-bottom:10px">${ESUBJ[type]}</div>
+        <button class="btn sm blue">Use Template</button>
+      </div>`).join('')}
+  </div>`;
+}
+
+/* ── QUOTES ── */
+async function genQuote(){
+  const id=document.getElementById('quote-acct-sel').value;
+  const a=ACCTS.find(x=>x.id===id)||ACCTS[0]; lastQuoteAcct=a;
+  const c=document.getElementById('quote-out');
+  c.innerHTML=`<div class="loadscr"><div class="spinner"></div><div class="loadtxt">Generating renewal quote…</div></div>`;
+  document.getElementById('send-quote-btn').disabled=true;
+  document.getElementById('sf-opp-btn').disabled=true;
+  const today=new Date().toISOString().split('T')[0];
+  const exp=new Date();exp.setDate(exp.getDate()+30);
+  let lines=[{name:'Platform License (Annual)',amount:Math.round(a.arr*.80)},{name:'Premium Support',amount:Math.round(a.arr*.15)},{name:'Implementation & Training',amount:Math.round(a.arr*.05)}];
+  let summary=`This renewal quote reflects ${a.name}'s current usage tier and account health of ${a.health}/100.`;
+  let discount=null;
+  if(AKEY){
+    try{
+      const raw=await callClaude(`Generate a SaaS renewal quote JSON. Account: ${a.name}, Industry: ${a.industry}, ARR: $${a.arr}, Health: ${a.health}/100, Renewal in ${du(a.renewalDate)} days. Return ONLY valid JSON: {"lineItems":[{"name":"string","amount":number}],"summary":"string","discount":"string or null","totalARR":number}`,800,true);
+      const p=JSON.parse(raw.replace(/```json?/g,'').replace(/```/g,'').trim());
+      if(p.lineItems){lines=p.lineItems;summary=p.summary||summary;discount=p.discount;}
+    }catch(e){}
+  }
+  const total=lines.reduce((s,l)=>s+Number(l.amount),0);
+  c.innerHTML=`<div class="quotecard">
+    <div class="qheader"><div><div class="qtitle">Renewal Quote — ${a.name}</div><div class="qdate">Issued ${today} · Expires ${exp.toISOString().split('T')[0]}</div></div><span class="badge ${AKEY?'g':'b'}">${AKEY?'AI Generated':'Draft'}</span></div>
+    <div class="qbodyd">
+      <div style="font-size:9px;color:var(--textd);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;font-weight:500">Line Items</div>
+      ${lines.map(l=>`<div class="qline"><span>${l.name}</span><span style="font-family:var(--mono)">$${Number(l.amount).toLocaleString()}</span></div>`).join('')}
+      ${discount?`<div style="font-size:10px;color:var(--a);margin:6px 0">Applied discount: ${discount}</div>`:''}
+      <div class="qtotal"><span>Total ARR</span><span style="color:var(--g);font-family:var(--mono)">$${total.toLocaleString()}</span></div>
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:11px;color:var(--textm);line-height:1.6">${summary}</div>
+    </div>
+    <div class="qfooterbtns"><button class="btn primary" onclick="sendQuote()">Send Quote</button><button class="btn" onclick="createSFOpp()">Create SF Opportunity</button></div>
+  </div>`;
+  document.getElementById('send-quote-btn').disabled=false;
+  document.getElementById('sf-opp-btn').disabled=false;
+  addLog('quote','Quote Generated',a.name+' — $'+total.toLocaleString());
+}
+async function sendQuote(){
+  if(!lastQuoteAcct)return;
+  await logTask(null,'Renewal Quote: '+lastQuoteAcct.name,'[Quote attached]',lastQuoteAcct.contact||'csm@account.com');
+  SENT.push({to:lastQuoteAcct.contact||'csm@account.com',subj:'Renewal Quote: '+lastQuoteAcct.name,body:'[Quote]',t:new Date().toLocaleTimeString()});
+  addAct('📄','var(--pdim)',`<strong>Quote sent</strong> to ${lastQuoteAcct.name}`);
+  addLog('quote','Quote Sent',lastQuoteAcct.name);
+  alert(`Quote sent to ${lastQuoteAcct.name} and logged to Salesforce!`);
+}
+async function createSFOpp(){
+  if(!lastQuoteAcct||SF.token==='demo'){alert('Connect Salesforce to create Opportunities.');return;}
+  const r=await sfCreate('Opportunity',{Name:lastQuoteAcct.name+' Renewal',StageName:'Proposal/Price Quote',CloseDate:lastQuoteAcct.renewalDate,Amount:lastQuoteAcct.arr,AccountId:lastQuoteAcct.id});
+  alert(`SF Opportunity created! ID: ${r.id}`);
+}
+function qQuote(id){nav('quotes');setTimeout(()=>{document.getElementById('quote-acct-sel').value=id;genQuote();},120);}
+
+/* ── PLANS ── */
+async function genPlan(){
+  const id=document.getElementById('plan-acct-sel').value;
+  const a=ACCTS.find(x=>x.id===id)||ACCTS[0];
+  const c=document.getElementById('plan-out');
+  c.innerHTML=`<div class="loadscr"><div class="spinner"></div><div class="loadtxt">Building 90-day success plan…</div></div>`;
+  let steps=[
+    {title:'Immediate Health Intervention',detail:`Schedule executive sponsor call within 5 days. Review top 3 support friction points. Assign dedicated resource for 30 days.`,timeline:'Days 1–7'},
+    {title:'Usage Activation Sprint',detail:`Identify 2 underused features with highest ROI potential. Run targeted training session. Set milestone at 80% feature adoption.`,timeline:'Days 8–30'},
+    {title:'Value Confirmation',detail:`Build ROI report showing platform impact on ${a.name}. Present to leadership. Get verbal renewal commitment.`,timeline:'Days 31–60'},
+    {title:'Renewal Close',detail:`Send formal renewal proposal. Negotiate terms if needed. Update Salesforce Opportunity to Closed/Won.`,timeline:'Days 61–90'},
+  ];
+  if(AKEY){
+    try{
+      const raw=await callClaude(`Create a 90-day customer success plan for ${a.name} (${a.industry}), ARR $${a.arr}, health ${a.health}/100, renewal in ${du(a.renewalDate)} days. Return ONLY JSON: {"steps":[{"title":"string","detail":"string","timeline":"string"}]}`,900,true);
+      const p=JSON.parse(raw.replace(/```json?/g,'').replace(/```/g,'').trim());
+      if(p.steps) steps=p.steps;
+    }catch(e){}
+  }
+  c.innerHTML=`<div style="font-size:11px;color:var(--textm);margin-bottom:12px">90-Day Success Plan · ${a.name} · Health: <span style="color:${hcol(a.health)}">${a.health}/100</span></div>
+    ${steps.map((s,i)=>`<div class="planstep"><div class="psnum">${i+1}</div><div class="psbody"><div class="pstitle">${s.title}</div><div class="psdetail">${s.detail}</div>${s.timeline?`<div class="pstl">${s.timeline}</div>`:''}</div></div>`).join('')}
+    <div style="display:flex;gap:7px;margin-top:10px"><button class="btn primary" onclick="savePlanSF()">Save to Salesforce</button></div>`;
+  addLog('plan','Plan Generated',a.name);
+}
+async function savePlanSF(){
+  if(SF.token==='demo'){alert('Plan saved (demo mode)!');return;}
+  await sfCreate('Task',{Subject:'90-Day Success Plan Created',Status:'In Progress',ActivityDate:new Date().toISOString().split('T')[0]});
+  alert('Success plan saved to Salesforce!');
+}
+function qPlan(id){nav('plans');setTimeout(()=>{document.getElementById('plan-acct-sel').value=id;genPlan();},120);}
+
+/* ── AI CSM CHAT ── */
+async function sendChat(){
+  const inp=document.getElementById('chat-input');
+  const msg=inp.value.trim();if(!msg)return;
+  inp.value=''; appendMsg('user',msg); CHAT.push({role:'user',content:msg});
+  const typing=appendTyping();
+  const summary=ACCTS.slice(0,15).map(a=>`• ${a.name} (${a.type}): health ${a.health}/100, ARR $${(a.arr/1000).toFixed(0)}K, renewal ${du(a.renewalDate)}d, stage: ${a.stage}, CSM: ${a.csm}`).join('\n');
+  const sys=`You are an autonomous Digital AI Customer Success Manager for a SaaS company. Today: ${new Date().toLocaleDateString()}.
+
+Your four autonomous capabilities:
+1. RENEWAL QUOTES — generate and send personalized renewal quotes to accounts approaching expiry
+2. HEALTH SCORE MONITORING — analyze health trends, flag drops below 50, recommend interventions
+3. AUTOMATED CHECK-IN EMAILS — draft and send personalized check-ins every 90 days based on account behavior
+4. ESCALATION ALERTS — flag accounts to human CSMs when health < 30 or renewal < 7 days, with full context
+
+Portfolio (${ACCTS.length} accounts):
+${summary}
+
+Digital-touch accounts you manage autonomously: ${ACCTS.filter(a=>a.type==='digital').map(a=>a.name).join(', ')}
+
+Be specific, reference actual account names and numbers. When asked to execute actions, describe exactly what you're doing. Be decisive and action-oriented.`;
+  if(!AKEY){typing.remove();const r=demoAI(msg);appendMsg('bot',r);CHAT.push({role:'assistant',content:r});return;}
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':AKEY,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,system:sys,messages:CHAT})});
+    const d=await res.json();typing.remove();
+    const r=d.content?.[0]?.text||'Error.';
+    appendMsg('bot',r);CHAT.push({role:'assistant',content:r});
+  }catch(e){typing.remove();appendMsg('bot','API error — check your Anthropic key.');}
+}
+function demoAI(msg){
+  const ml=msg.toLowerCase();
+  const crit=ACCTS.filter(a=>a.health<50).sort((a,b)=>a.health-b.health);
+  const soon=ACCTS.filter(a=>du(a.renewalDate)<=30).sort((a,b)=>du(a.renewalDate)-du(b.renewalDate));
+  if(ml.includes('risk')||ml.includes('critical')||ml.includes('urgent')||ml.includes('health interv'))
+    return `Current accounts requiring intervention:\n\n${crit.map(a=>`${a.health<30?'🔴':'🟡'} **${a.name}** — Health ${a.health}/100, renewal in ${du(a.renewalDate)} days, ARR $${(a.arr/1000).toFixed(0)}K\n→ ${a.health<30?'CRITICAL: Escalating to human CSM + creating SF Task':'AT RISK: Queuing at-risk intervention email'}`).join('\n\n')}\n\nI've queued intervention emails for the at-risk accounts and created escalation tasks in Salesforce for the critical ones. Want me to send anything immediately?`;
+  if(ml.includes('renewal')||ml.includes('30 day'))
+    return `Accounts renewing within 30 days:\n\n${soon.map(a=>`📅 **${a.name}** — ${du(a.renewalDate)} days, $${(a.arr/1000).toFixed(0)}K ARR, health ${a.health}/100`).join('\n')}\n\n**Total: $${(soon.reduce((s,a)=>s+a.arr,0)/1000).toFixed(0)}K ARR**\n\nI'd recommend sending renewal quotes immediately to ${soon.filter(a=>a.health<70).map(a=>a.name).slice(0,2).join(' and ')}. Shall I generate them now?`;
+  if(ml.includes('quote')||ml.includes('auto-send'))
+    return `Executing auto-quote generation for ${ACCTS.filter(a=>du(a.renewalDate)<=60).length} accounts renewing within 60 days:\n\n${ACCTS.filter(a=>du(a.renewalDate)<=60).map(a=>`✓ **${a.name}** — $${(a.arr/1000).toFixed(0)}K quote generated → ${a.contact||'contact on file'}`).join('\n')}\n\nAll quotes logged to Salesforce as Opportunities. ${ACCTS.filter(a=>du(a.renewalDate)<=60).length} quotes sent and tracked.`;
+  if(ml.includes('check-in')||ml.includes('sequence'))
+    return `Running check-in email sequence for ${ACCTS.filter(a=>a.type==='digital').length} digital-touch accounts:\n\n${ACCTS.filter(a=>a.type==='digital').map(a=>`✉ **${a.name}** — ${a.health<50?'At-risk email':'Standard check-in'} → ${a.contact||'contact on file'}`).join('\n')}\n\nAll ${ACCTS.filter(a=>a.type==='digital').length} emails personalized based on health score and renewal timeline. Logged to Salesforce Tasks. Sending now.`;
+  const avg=Math.round(ACCTS.reduce((s,a)=>s+a.health,0)/ACCTS.length);
+  return `Portfolio snapshot as of ${new Date().toLocaleDateString()}:\n\n**Health:** Avg ${avg}/100 · ${ACCTS.filter(a=>a.health>=75).length} healthy · ${ACCTS.filter(a=>a.health<50).length} critical\n**Renewals:** ${ACCTS.filter(a=>du(a.renewalDate)<=30).length} in 30 days · $${(ACCTS.filter(a=>du(a.renewalDate)<=30).reduce((s,a)=>s+a.arr,0)/1000).toFixed(0)}K ARR\n**Automations active:** ${Object.values(AUTO_ENABLED).filter(Boolean).length}/6 rules running\n**Autonomous accounts:** ${ACCTS.filter(a=>a.type==='digital').length} digital-touch managed by me\n\nI'm actively monitoring all ${ACCTS.length} accounts for health drops, renewal timing, and engagement signals. What would you like me to do?`;
+}
+function appendMsg(role,txt){
+  const a=document.getElementById('chat-area');
+  const div=document.createElement('div');div.className='msg '+(role==='user'?'user':'');
+  const t=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  const f=txt.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+  div.innerHTML=role==='user'?`<div><div class="bubble">${f}</div><div class="msgmeta">${t}</div></div>`:`<div class="botav">AI</div><div><div class="bubble">${f}</div><div class="msgmeta">${t}</div></div>`;
+  a.appendChild(div);a.scrollTop=a.scrollHeight;return div;
+}
+function appendTyping(){
+  const a=document.getElementById('chat-area');
+  const div=document.createElement('div');div.className='msg';
+  div.innerHTML=`<div class="botav">AI</div><div><div class="bubble"><div class="typing"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div></div></div>`;
+  a.appendChild(div);a.scrollTop=a.scrollHeight;return div;
+}
+function qmsg(m){document.getElementById('chat-input').value=m;sendChat();}
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}}
+function clearChat(){document.getElementById('chat-area').innerHTML='';CHAT=[];}
+function escalateAll(){
+  const urg=ACCTS.filter(a=>a.health<30||du(a.renewalDate)<7);
+  if(!urg.length){alert('No accounts require immediate escalation.');return;}
+  appendMsg('bot',`Escalating ${urg.length} critical accounts to human CSMs:\n\n${urg.map(a=>`🚨 **${a.name}** — Health ${a.health}/100, renewal in ${du(a.renewalDate)} days → Notifying ${a.csm}`).join('\n')}\n\nSalesforce Tasks created. CSM team notified.`);
+  urg.forEach(a=>logTask(a.id,'URGENT ESCALATION: '+a.name+' health '+a.health+'/100 renewal '+du(a.renewalDate)+'d'));
+}
+
+/* ── AUTOMATION ── */
+function renderAuto(){
+  const dig=ACCTS.filter(a=>a.type==='digital').length;
+  const sc=ACCTS.filter(a=>a.type==='scale').length;
+  const hi=ACCTS.filter(a=>a.type==='high').length;
+  document.getElementById('seg-grid').innerHTML=`
+    <div class="segcard"><div class="segicon">🤖</div><div class="segname">Digital Touch</div><div class="segcount" style="color:var(--g)">${dig}</div><div class="segsub">Fully automated by AI CSM</div></div>
+    <div class="segcard"><div class="segicon">⚡</div><div class="segname">Scale CSM</div><div class="segcount" style="color:var(--b)">${sc}</div><div class="segsub">AI-assisted, human reviewed</div></div>
+    <div class="segcard"><div class="segicon">🎯</div><div class="segname">High Touch</div><div class="segcount" style="color:var(--p)">${hi}</div><div class="segsub">Manual + escalation alerts</div></div>`;
+  const rules=[
+    {k:'checkin',icon:'✉',col:'var(--bdim)',name:'Quarterly Check-in Emails',desc:'AI sends personalized check-ins every 90 days to digital &amp; scale accounts',stats:`${ACCTS.filter(a=>a.type!=='high').length} accounts in scope · last run 2d ago`},
+    {k:'renewal',icon:'↻',col:'var(--gdim)',name:'Renewal Outreach Sequence',desc:'90→60→30→14→7-day automated renewal emails with escalating urgency',stats:`${ACCTS.filter(a=>du(a.renewalDate)<=90).length} accounts in sequence`},
+    {k:'healthmon',icon:'📊',col:'var(--adim)',name:'Health Score Monitoring',desc:'Polls Salesforce health scores every 6h, alerts CSM when account drops below 50',stats:`Monitoring ${ACCTS.length} accounts · ${ACCTS.filter(a=>a.health<50).length} active alerts`},
+    {k:'escalate',icon:'🚨',col:'var(--rdim)',name:'Auto-Escalation Alerts',desc:'Creates SF Task + notifies human CSM when health &lt;30 or renewal &lt;7 days',stats:`${ACCTS.filter(a=>a.health<30||du(a.renewalDate)<7).length} active escalations`},
+    {k:'autoquote',icon:'📄',col:'var(--pdim)',name:'Auto Quote Sending',desc:'Generates &amp; sends renewal quotes 60 days before expiry for digital-touch accounts',stats:`${ACCTS.filter(a=>a.type==='digital'&&du(a.renewalDate)<=60).length} quotes pending`},
+    {k:'autoplan',icon:'✓',col:'var(--gdim)',name:'Success Plan Auto-Trigger',desc:'Auto-generates 90-day success plans when account health drops below 60',stats:'Triggers on health drop below 60 threshold'},
+  ];
+  document.getElementById('automation-rules').innerHTML=rules.map(r=>`
+    <div class="autoitem">
+      <div class="autoicon" style="background:${r.col}">${r.icon}</div>
+      <div class="autoinfo"><div class="autoname">${r.name}</div><div class="autodesc">${r.desc}</div><div class="autostats">${r.stats}</div></div>
+      <div class="toggle ${AUTO_ENABLED[r.k]?'on':''}" onclick="toggleAuto('${r.k}',this)"></div>
+    </div>`).join('');
+  renderAutoLog();
+}
+function toggleAuto(k,el){
+  AUTO_ENABLED[k]=!AUTO_ENABLED[k];el.classList.toggle('on');
+  const on=Object.values(AUTO_ENABLED).filter(Boolean).length;
+  document.getElementById('auto-badge').textContent=on+' ON';
+  addLog(k,(AUTO_ENABLED[k]?'Enabled':'Disabled'),k);
+  renderAutoLog();
+}
+function addLog(type,action,detail){
+  AUTO_LOG.unshift({type,action,detail,t:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});
+  if(AUTO_LOG.length>20)AUTO_LOG.pop();
+  renderAutoLog();
+}
+function renderAutoLog(){
+  const c=document.getElementById('auto-log');if(!c)return;
+  const seed=[
+    {type:'checkin',action:'Check-in Sent',detail:'TerraLogic Inc',t:'09:14'},
+    {type:'healthmon',action:'Health Alert',detail:'Quasar → 23/100',t:'08:52'},
+    {type:'autoquote',action:'Quote Sent',detail:'RiverBend Analytics',t:'08:30'},
+    {type:'renewal',action:'Renewal Email',detail:'BrightEdge (7d out)',t:'07:00'},
+    {type:'escalate',action:'Escalation',detail:'CloudNine Platforms',t:'06:45'},
+  ];
+  const items=[...AUTO_LOG,...seed].slice(0,12);
+  c.innerHTML=items.map(i=>`<div class="logitem"><span class="logtime">${i.t}</span><span class="logtype"><span class="badge ${lbadge(i.type)}">${i.action}</span></span><span class="logmsg">${i.detail}</span></div>`).join('');
+}
+function lbadge(t){return{checkin:'b',renewal:'g',healthmon:'a',escalate:'r',autoquote:'p',plan:'g',sync:'b',email:'b',quote:'p'}[t]||'b';}
+
+/* ── ESCALATION ── */
+function openEsc(id){
+  const a=ACCTS.find(x=>x.id===id);currentEscId=id;
+  document.getElementById('escalate-details').innerHTML=a?`Account: <strong style="color:var(--text)">${a.name}</strong><br>Health: <span style="color:${hcol(a.health)}">${a.health}/100</span> · ARR: $${a.arr.toLocaleString()} · Renewal: ${du(a.renewalDate)} days<br>CSM: ${a.csm} · Stage: ${a.stage}`:'';
+  document.getElementById('escalate-modal').classList.add('open');
+}
+function closeModal(){document.getElementById('escalate-modal').classList.remove('open');}
+async function confirmEscalate(){
+  const a=ACCTS.find(x=>x.id===currentEscId);
+  await logTask(currentEscId,'URGENT ESCALATION: '+(a?.name||'account')+' — Health '+(a?.health||'?')+'/100, Renewal '+du(a?.renewalDate)+'d');
+  addAct('🚨','var(--rdim)',`<strong>Escalated</strong> ${a?.name} to human CSM`);
+  addLog('escalate','Escalation',a?.name);
+  closeModal();
+  alert(`${a?.name} escalated. Salesforce Task created, CSM notified.`);
+}
+
+/* ── HELPERS ── */
+async function callClaude(prompt,maxTok=600,jsonMode=false){
+  const body={model:'claude-sonnet-4-20250514',max_tokens:maxTok,messages:[{role:'user',content:prompt}]};
+  if(jsonMode) body.system='Return ONLY valid JSON. No markdown, no explanation, no preamble.';
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':AKEY,'anthropic-version':'2023-06-01'},body:JSON.stringify(body)});
+  const d=await r.json();return d.content?.[0]?.text||'';
+}
+async function logTask(accountId,subject,body,emailTo){
+  if(SF.token==='demo')return;
+  const payload={Subject:subject||'CSM Activity',Status:'Completed',ActivityDate:new Date().toISOString().split('T')[0]};
+  if(accountId) payload.WhatId=accountId;
+  if(body) payload.Description=body;
+  if(emailTo) payload.TaskSubtype='Email';
+  await sfCreate('Task',payload);
+}
+function hcol(h){return h>=75?'var(--g)':h>=50?'var(--a)':'var(--r)';}
+function sbadge(s){return{'At Risk':'r','Churned':'r','Renewal Sent':'b','Negotiating':'a','Renewed':'g','Active':'g'}[s]||'b';}
+function fdate(d){const dt=new Date();dt.setDate(dt.getDate()+d);return dt.toISOString().split('T')[0];}
+function du(ds){if(!ds)return 999;return Math.max(0,Math.ceil((new Date(ds)-new Date())/86400000));}
+function popSelects(){
+  ['email-acct-sel','quote-acct-sel','plan-acct-sel'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.innerHTML='<option value="">Select account…</option>'+ACCTS.map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
+  });
+}
+function updateBadges(){
+  const u=ACCTS.filter(a=>a.health<50||du(a.renewalDate)<30).length;
+  document.getElementById('renewal-badge').textContent=u;
+}
+function runAutoChecks(){
+  if(AUTO_ENABLED.healthmon) ACCTS.filter(a=>a.health<30||du(a.renewalDate)<7).forEach(a=>addLog('escalate','Health Alert',a.name+' → H:'+a.health+' '+du(a.renewalDate)+'d'));
+  if(AUTO_ENABLED.autoquote) ACCTS.filter(a=>a.type==='digital'&&du(a.renewalDate)<=60).forEach(a=>addLog('autoquote','Auto Quote Queued',a.name+' '+du(a.renewalDate)+'d'));
+  updateBadges();
+}
+
+/* ── INIT ── */
+document.getElementById('chat-area').innerHTML='';
+appendMsg('bot','Hi — I\'m your Digital AI CSM. I autonomously manage your portfolio with four core capabilities:\n\n**Renewal Quotes** — auto-generated and sent 60 days before expiry for digital-touch accounts\n**Health Monitoring** — continuous monitoring with alerts when scores drop below thresholds\n**Check-in Emails** — personalized and sent every 90 days based on account behavior\n**Escalation Alerts** — automatic flags to human CSMs when health is critical or renewal is imminent\n\nClick "Load Demo Data" on the setup screen to explore with 15 sample accounts, or connect your Salesforce org to go live.');
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePanelFn();closeModal();}});
+document.getElementById('overlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closePanelFn();});
+</script>
+</body>
+</html>
